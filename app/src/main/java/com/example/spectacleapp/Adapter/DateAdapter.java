@@ -77,6 +77,7 @@ public class  DateAdapter extends RecyclerView.Adapter<DateAdapter.DateViewHolde
         void onItemClick(DaySchedule daySchedule);
     }
 
+
     public void setOnItemClickListener(OnItemClickListener listener) {
         this.listener = listener;
     }

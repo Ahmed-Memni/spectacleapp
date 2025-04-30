@@ -1,28 +1,36 @@
 package com.example.spectacleapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.util.Log;
+import android.widget.Spinner;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
-
-import com.example.spectacleapp.Adapter.Actor;
-import com.example.spectacleapp.Adapter.SidebarPagerAdapter;
-import com.example.spectacleapp.Models.DaySchedule;
-import com.example.spectacleapp.Models.Spectacles;
-import com.example.spectacleapp.Models.TimeSlot;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.spectacleapp.Adapter.SidebarPagerAdapter;
+import com.example.spectacleapp.Models.Spectacles;
+import com.example.spectacleapp.Models.TimeSlot;
+import com.example.spectacleapp.Models.DaySchedule;
+import com.example.spectacleapp.Utils.SpectaclesFilterUtils;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.ismaeldivita.chipnavigation.ChipNavigationBar;
+
+
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 
 public class MainActivity extends AppCompatActivity {
 
@@ -30,13 +38,19 @@ public class MainActivity extends AppCompatActivity {
     private ProgressBar progressBarSlider;
     private ProgressBar progressBarTop;  // Second progress bar for the RecyclerView (Sidebar)
     private RecyclerView recyclerViewTopMovies;  // New RecyclerView instance
-    private RecyclerView recyclerView;// New RecyclerView with ID "recyclerView"
-
+    private RecyclerView recyclerView; // New RecyclerView with ID "recyclerView"
     private ProgressBar progressBarUpcoming;
+
+    private DatabaseReference database;
+    private List<Spectacles> spectaclesList = new ArrayList<>(); // List to hold the fetched spectacles
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Initialize Firebase Database
+        database = FirebaseDatabase.getInstance().getReference();
 
         viewPager = findViewById(R.id.viewPager22);
         progressBarSlider = findViewById(R.id.progressBarSlider);
@@ -50,83 +64,119 @@ public class MainActivity extends AppCompatActivity {
         progressBarTop.setVisibility(View.VISIBLE);
         progressBarUpcoming.setVisibility(View.VISIBLE);
 
-        // Create dummy Spectacles list (replace URLs with real ones later)
-        List<Spectacles> spectaclesList = new ArrayList<>();
-        // First create TimeSlots for a day
-        ArrayList<TimeSlot> timeSlots = new ArrayList<>();
-        ArrayList<TimeSlot> timeSlots1 = new ArrayList<>();
-        timeSlots1.add(new TimeSlot(
-                "14:00",
-                new ArrayList<>(Arrays.asList("A1", "A2", "A3"))
-        ));
-        timeSlots.add(new TimeSlot(
-                "14:00",
-                new ArrayList<>(Arrays.asList("A1", "A2", "A3"))
-        ));
+        ChipNavigationBar chipNavigationBar = findViewById(R.id.chipNavigationBar);
+        chipNavigationBar.setOnItemSelectedListener(itemId -> {
+            if (itemId == R.id.explorer) {
+                // Optional: Avoid reloading current activity
+                // startActivity(new Intent(MainActivity.this, MainActivity.class));
+                Log.d("Navigation", "Explorer selected");
+            } else if (itemId == R.id.reservations) {
+                Intent intent = new Intent(MainActivity.this, ReservationListActivity.class);
+                startActivity(intent);
+            }
+        });
 
-        timeSlots.add(new TimeSlot(
-                "18:00",
-                new ArrayList<>(Arrays.asList("B1", "B2", "C1"))
-        ));
-
-// Now create a DaySchedule with these TimeSlots
-        ArrayList<DaySchedule> daySchedules = new ArrayList<>();
-
-        daySchedules.add(new DaySchedule(
-                "2024-04-27",
-                timeSlots
-        ));
-
-
-        daySchedules.add(new DaySchedule("2024-04-28",timeSlots1));
-
-        spectaclesList.add(new Spectacles(
-                "Spectacle One",
-                "A thrilling adventure film.",
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSdrmElk_ILXrmYrG9M0rqhl9yBWU31OdvTBg&s",
-                "2h 15m",
-                8,
-                2023,
-                new double[]{12.99, 15.99, 19.99},
-                new ArrayList<>(Arrays.asList("Action", "Adventure")),
-                new ArrayList<>(Arrays.asList(
-                        new Actor("Sal3a", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfqgndXs1s0BoHvHRgl4wsYu2E8H9qRwFtFw&s"),
-                        new Actor("Rock", "https://cdn.britannica.com/36/147936-050-8E84B614/Dwayne-Johnson.jpg")
-                )),
-                "https://www.google.com/maps?q=Eiffel+Tower",
-                daySchedules // empty daySchedules list for now
-        ));
-
-        spectaclesList.add(new Spectacles(
-                "Spectacle Two",
-                "Romantic comedy with a twist.",
-                "https://c8.alamy.com/comp/FXARPC/magic-show-poster-FXARPC.jpg",
-                "1h 45m",
-                7,
-                2022,
-                new double[]{15.9, 17.99, 19.99},
-                new ArrayList<>(Arrays.asList("Romance", "Comedy")),
-                new ArrayList<>(Arrays.asList(
-                        new Actor("Thor", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTXjJfrUZOmZRNegoiUAoPEWchd-kGBLWAGgw&s"),
-                        new Actor("Hoe", "https://ca-times.brightspotcdn.com/dims4/default/57bdaa2/2147483647/strip/true/crop/2048x1365+0+0/resize/1200x800!/quality/75/?url=https%3A%2F%2Fwww.trbimg.com%2Fimg-546baffb%2Fturbine%2Flat-tom-hardy-la0021109433-20140905")
-                )),
-                "https://goo.gl/maps/XYZ123",
-                daySchedules // empty daySchedules list for now
-        ));
-
-        // Create and set the adapter for both ViewPager2 and RecyclerView
-        SidebarPagerAdapter adapter = new SidebarPagerAdapter(this, spectaclesList);
-        viewPager.setAdapter(adapter);
-
-        // Use LinearLayoutManager for RecyclerView
-        recyclerViewTopMovies.setAdapter(adapter);  // Set the same adapter for RecyclerView
-        recyclerViewTopMovies.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)); // Optional: For horizontal list
-        recyclerViewTopMovies.postDelayed(() -> progressBarSlider.setVisibility(View.GONE), 1000);
-        viewPager.postDelayed(() -> progressBarSlider.setVisibility(View.GONE), 1000);
-        recyclerViewTopMovies.postDelayed(() -> progressBarTop.setVisibility(View.GONE), 1000);
-        // Set up the second RecyclerView ("recyclerView")
-        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));  // Default vertical layout
-        recyclerView.setAdapter(adapter);  // Use the same adapter for this RecyclerView as well
-        recyclerView.postDelayed(() -> progressBarUpcoming.setVisibility(View.GONE), 1000);
+        // Fetch spectacles data from Firebase
+        fetchSpectaclesFromFirebase();
     }
+
+    private void fetchSpectaclesFromFirebase() {
+        database.child("spectaclesList").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Spinner spinnerFilter = findViewById(R.id.spinnerFilter);
+                EditText searchBox = findViewById(R.id.editTextText);
+
+                String[] filterOptions = {"Title", "Genre", "Price Maximum", "Year Made", "Rating", "Day"};
+                ArrayAdapter<String> adapterSpinner = new ArrayAdapter<>(
+                        MainActivity.this,
+                        android.R.layout.simple_spinner_item,
+                        filterOptions
+                );
+                adapterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                spinnerFilter.setAdapter(adapterSpinner);
+
+                spectaclesList.clear();
+
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Spectacles spectacle = snapshot.getValue(Spectacles.class);
+                    spectaclesList.add(spectacle);
+                }
+
+                // Full list adapters for both RecyclerViews
+                SidebarPagerAdapter fullAdapter = new SidebarPagerAdapter(MainActivity.this, spectaclesList);
+                SidebarPagerAdapter fullAdapterrating = new SidebarPagerAdapter(MainActivity.this, SpectaclesFilterUtils.sortByRatingDescending(spectaclesList));
+                recyclerViewTopMovies.setAdapter(fullAdapter);
+                recyclerViewTopMovies.setLayoutManager(new LinearLayoutManager(MainActivity.this, LinearLayoutManager.HORIZONTAL, false));
+                recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this, LinearLayoutManager.HORIZONTAL, false));
+                recyclerView.setAdapter(fullAdapter);
+
+                // Set initial ViewPager content (full list)
+                viewPager.setAdapter(fullAdapter);
+
+                // Hide progress bars
+                recyclerViewTopMovies.postDelayed(() -> progressBarTop.setVisibility(View.GONE), 1000);
+                recyclerView.postDelayed(() -> progressBarUpcoming.setVisibility(View.GONE), 1000);
+                viewPager.postDelayed(() -> progressBarSlider.setVisibility(View.GONE), 1000);
+
+                // Live filtering for ViewPager
+                searchBox.addTextChangedListener(new android.text.TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        String input = s.toString().trim();
+                        String selectedFilter = spinnerFilter.getSelectedItem().toString();
+                        List<Spectacles> filtered = new ArrayList<>(spectaclesList);
+
+                        switch (selectedFilter) {
+                            case "Title":
+                                filtered = SpectaclesFilterUtils.filterByTitle(filtered, input);
+                                break;
+                            case "Genre":
+                                filtered = SpectaclesFilterUtils.filterByGenre(filtered, input);
+                                break;
+                            case "Rating":
+                                try {
+                                    int rating = Integer.parseInt(input);
+                                    filtered = SpectaclesFilterUtils.filterByMinRating(filtered, rating);
+                                } catch (NumberFormatException ignored) {}
+                                break;
+                            case "Year Made":
+                                try {
+                                    int year = Integer.parseInt(input);
+                                    filtered = SpectaclesFilterUtils.filterByYear(filtered, year);
+                                } catch (NumberFormatException ignored) {}
+                                break;
+                            case "Price Maximum":
+                                try {
+                                    double max = Double.parseDouble(input);
+                                    filtered = SpectaclesFilterUtils.filterByPriceRange(filtered,  max);
+                                } catch (NumberFormatException ignored) {}
+                                break;
+                            case "Day":
+                                filtered = SpectaclesFilterUtils.filterByDay(filtered, input);
+                                break;
+                            case "Time":
+                                // Optional: implement if needed
+                                break;
+                        }
+
+                        SidebarPagerAdapter filteredAdapter = new SidebarPagerAdapter(MainActivity.this, filtered);
+                        viewPager.setAdapter(filteredAdapter);
+                    }
+
+                    @Override
+                    public void afterTextChanged(android.text.Editable s) {}
+                });
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e("FirebaseError", "Failed to fetch data: " + databaseError.getMessage());
+            }
+        });
+    }
+
 }

@@ -13,6 +13,8 @@ public class Actor implements Parcelable {
         this.imageUrl = imageUrl;
     }
 
+    public Actor() {
+    }
     // Getters and Setters
     public String getName() {
         return name;

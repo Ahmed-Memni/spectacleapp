@@ -5,12 +5,15 @@ import android.os.Parcelable;
 import java.util.List;
 
 public class TimeSlot implements Parcelable {
-    private String time;
-    private List<String> seats;
+    public String time;
+    public List<String> seats;
 
     public TimeSlot(String time, List<String> seats) {
         this.time = time;
         this.seats = seats;
+    }
+    public TimeSlot() {
+        // Firebase requires a no-argument constructor
     }
 
     protected TimeSlot(Parcel in) {
@@ -38,6 +41,10 @@ public class TimeSlot implements Parcelable {
         return seats;
     }
 
+    public void setSeats(List<String> seats) {
+        this.seats = seats;
+    }
+
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(time);
@@ -48,4 +55,7 @@ public class TimeSlot implements Parcelable {
     public int describeContents() {
         return 0;
     }
+
+
 }
+

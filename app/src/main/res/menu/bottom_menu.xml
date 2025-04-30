@@ -10,23 +10,9 @@
         app:cnb_iconColor="@color/white" />
 
     <item
-        android:id="@+id/favorites"
-        android:icon="@drawable/btn_2"
-        android:title="Favorites"
-        app:cnb_backgroundColor="@color/orange"
-        app:cnb_iconColor="@color/white" />
-
-    <item
-        android:id="@+id/cart"
+        android:id="@+id/reservations"
         android:icon="@drawable/btn_3"
-        android:title="Cart"
-        app:cnb_backgroundColor="@color/orange"
-        app:cnb_iconColor="@color/white" />
-
-    <item
-        android:id="@+id/profile"
-        android:icon="@drawable/btn_4"
-        android:title="Profile"
+        android:title="Reservations"
         app:cnb_backgroundColor="@color/orange"
         app:cnb_iconColor="@color/white" />
 

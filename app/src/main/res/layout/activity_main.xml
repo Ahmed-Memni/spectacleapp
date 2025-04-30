@@ -66,21 +66,40 @@
                     app:layout_constraintTop_toBottomOf="@+id/textView3" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <EditText
-                android:id="@+id/editTextText"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_margin="16dp"
-                android:background="@drawable/light_black_bg"
-                android:drawableStart="@drawable/search"
-                android:drawableEnd="@drawable/microphone"
-                android:drawablePadding="8dp"
-                android:ems="10"
-                android:hint="Search Theatrics..."
-                android:inputType="text"
-                android:padding="12dp"
-                android:textColor="@color/white"
-                android:textColorHint="@color/white" />
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_margin="16dp">
+
+                <!-- First EditText (Search Field) -->
+                <EditText
+                    android:id="@+id/editTextText"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_weight="2"
+                    android:background="@drawable/light_black_bg"
+                    android:drawableStart="@drawable/search"
+                    android:drawableEnd="@drawable/microphone"
+                    android:drawablePadding="8dp"
+                    android:hint="Search Theatrics..."
+                    android:inputType="text"
+                    android:padding="12dp"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/white" />
+
+                <!-- Second Spinner (ComboBox) -->
+                <Spinner
+                    android:id="@+id/spinnerFilter"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/light_black_bg"
+                    android:padding="12dp"
+                    android:spinnerMode="dropdown"
+                    android:popupBackground="@color/black" />
+
+            </LinearLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -206,18 +225,17 @@
 
     <com.ismaeldivita.chipnavigation.ChipNavigationBar
         android:layout_width="match_parent"
+        android:id="@+id/chipNavigationBar"
         android:layout_height="70dp"
         app:cnb_menuResource="@menu/bottom_menu"
         android:background="@drawable/light_black_bg"
         android:padding="4dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginBottom="32dp"
         app:cnb_iconSize="20dp"
         app:cnb_iconColor="@color/white"
         app:cnb_orientationMode="horizontal"
         app:cnb_radius="10dp"
         app:cnb_unselectedColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="@+id/scrollView2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

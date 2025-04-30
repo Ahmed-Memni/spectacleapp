@@ -15,6 +15,7 @@ import com.example.spectacleapp.Adapter.Actor;
 import com.example.spectacleapp.Models.Spectacles; // Make sure to import Spectacles model
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ImageDetailActivity extends AppCompatActivity {
 
@@ -50,9 +51,9 @@ public class ImageDetailActivity extends AppCompatActivity {
             descText.setText(spectacle.getDescription());
             ratingText.setText("Rating: " + spectacle.getRat());  // Assuming 'rat' is the rating
             yearText.setText("Year: " + spectacle.getYear());
-            double[] prices = spectacle.getPrice();
-            if (prices != null && prices.length == 3) {
-                priceText.setText("Prices: Dinar " + prices[0] + ", " + prices[1] + ", " + prices[2]);
+            List<Double> prices = spectacle.getPrice();
+            if (prices != null && prices.size() == 3) {
+                priceText.setText("Prices: Dinar " + prices.get(0) + ", " + prices.get(1) + ", " + prices.get(2));
             } else {
                 priceText.setText("Prices: not available");
             }
@@ -61,7 +62,7 @@ public class ImageDetailActivity extends AppCompatActivity {
 
             // Add actors to the actors container
             // Add actors to the actors container
-            ArrayList<Actor> actorsList = spectacle.getCasts();
+            ArrayList<Actor> actorsList = spectacle.getCast();
             if (actorsList != null) {
                 for (Actor actor : actorsList) {
                     // Create a container for the actor image and name
@@ -117,11 +118,27 @@ public class ImageDetailActivity extends AppCompatActivity {
 
 // Set up the click listener to navigate to MainActivity
         backButton.setOnClickListener(v -> {
+            // Create the intent to go back to MainActivity
             Intent intent = new Intent(ImageDetailActivity.this, MainActivity.class);
+
+            // Check if the spectacle has been modified
+            if (spectacle != null) {
+                // Create an intent to return the modified spectacle to MainActivity
+                Intent resultIntent = new Intent();
+
+                // Put the modified spectacle in the result intent
+                resultIntent.putExtra("modifiedSpectacle", spectacle);  // Pass the modified spectacle back
+
+                // Set the result code and return the modified spectacle
+                setResult(RESULT_OK, resultIntent);
+            }
+
+            // Clear the activity stack and start MainActivity
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK); // Clear the activity stack
             startActivity(intent);
-            finish(); // Optional: close ImageDetailActivity
+            finish(); // Optionally close ImageDetailActivity
         });
+
 
         // Do Nothing button (for example, navigate to SeatListActivity)
         doNothingBtn.setOnClickListener(v -> {

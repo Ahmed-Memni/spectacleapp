@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    card_view:cardCornerRadius="12dp"
+    card_view:cardElevation="4dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/grey"
+        android:padding="8dp">
+
+        <ImageView
+            android:id="@+id/imagePoster"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:scaleType="centerCrop"
+            android:src="@android:drawable/ic_menu_gallery" />
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingStart="12dp"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/textSpectacleTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Spectacle Title"
+                android:textStyle="bold"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/textDateTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Date - Time" />
+
+            <TextView
+                android:id="@+id/textTotalPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Total: $" />
+
+            <TextView
+                android:id="@+id/textSeats"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Seats: A1, A2" />
+
+            <Button
+                android:id="@+id/buttonAction"
+                android:layout_width="wrap_content"
+                android:layout_height="45dp"
+                android:layout_gravity="end"
+                android:backgroundTint="@color/black"
+            android:padding="8dp"
+            android:text="Download Ticket"
+            android:textColor="@color/white" />
+        </LinearLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

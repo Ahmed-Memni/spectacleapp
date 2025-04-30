@@ -15,21 +15,21 @@ public class Spectacles implements Parcelable {
     private String time;
     private int rat;
     private int year;
-    private double[] price = new double[3];
+    private List<Double> price;  // Changed from double[] to List<Double>
     private List<String> genre;
     private ArrayList<Actor> cast;
     private String googleMapsLink;
 
-    private List<DaySchedule> daySchedules; // NEW LINE
+    public List<DaySchedule> daySchedules; // NEW LINE
 
     // Default constructor
     public Spectacles() {}
 
     // Constructor
     public Spectacles(String title, String description, String poster, String time,
-                      int rat, int year, double[] price,
+                      int rat, int year, List<Double> price,  // Changed from double[] to List<Double>
                       List<String> genre, ArrayList<Actor> casts,
-                      String googleMapsLink, List<DaySchedule> daySchedules) { // ADD DAY SCHEDULES HERE
+                      String googleMapsLink, List<DaySchedule> daySchedules) {
         this.title = title;
         this.description = description;
         this.poster = poster;
@@ -43,7 +43,6 @@ public class Spectacles implements Parcelable {
         this.daySchedules = daySchedules;
     }
 
-    // Getters and Setters
     // Getters and Setters
     public String getTitle() {
         return title;
@@ -93,11 +92,11 @@ public class Spectacles implements Parcelable {
         this.year = year;
     }
 
-    public double[] getPrice() {
+    public List<Double> getPrice() {  // Changed the return type to List<Double>
         return price;
     }
 
-    public void setPrice(double[] price) {
+    public void setPrice(List<Double> price) {  // Changed parameter to List<Double>
         this.price = price;
     }
 
@@ -109,13 +108,14 @@ public class Spectacles implements Parcelable {
         this.genre = genre;
     }
 
-    public ArrayList<Actor> getCasts() {
+    public ArrayList<Actor> getCast() {
         return cast;
     }
 
-    public void setCasts(ArrayList<Actor> casts) {
+    public void setCast(ArrayList<Actor> casts) {
         this.cast = casts;
     }
+
     public String getGoogleMapsLink() {
         return googleMapsLink;
     }
@@ -140,7 +140,8 @@ public class Spectacles implements Parcelable {
         time = in.readString();
         rat = in.readInt();
         year = in.readInt();
-        price = in.createDoubleArray();
+        price = new ArrayList<>();  // Initialize as ArrayList
+        in.readList(price, Double.class.getClassLoader());  // Read List<Double>
         genre = in.createStringArrayList();
         cast = in.createTypedArrayList(Actor.CREATOR);
         googleMapsLink = in.readString();
@@ -155,7 +156,7 @@ public class Spectacles implements Parcelable {
         dest.writeString(time);
         dest.writeInt(rat);
         dest.writeInt(year);
-        dest.writeDoubleArray(price);
+        dest.writeList(price);  // Write List<Double>
         dest.writeStringList(genre);
         dest.writeTypedList(cast);
         dest.writeString(googleMapsLink);
