@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "207011466168",
+    "firebase_url": "https://mobileapp-3d544-default-rtdb.firebaseio.com",
+    "project_id": "mobileapp-3d544",
+    "storage_bucket": "mobileapp-3d544.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:207011466168:android:46466738be5ce970785d4d",
+        "android_client_info": {
+          "package_name": "com.example.ffs"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDUN0RJjmAVR4ALWL2QEWrKp6GaBAsLSaI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:207011466168:android:fc7b417a5e3e5657785d4d",
+        "android_client_info": {
+          "package_name": "com.example.spectacleapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDUN0RJjmAVR4ALWL2QEWrKp6GaBAsLSaI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
